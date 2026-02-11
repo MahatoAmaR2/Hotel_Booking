@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AMAR&Co - Booking</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.4.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./book.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>Hotel Booking Form</h2>
+
+      <form id="bookingForm">
+        <div class="form-group">
+          <label>Check-in *</label>
+          <input type="date" id="checkin" required />
+          <small class="error"></small>
+        </div>
+
+        <div class="form-group">
+          <label>Check-out *</label>
+          <input type="date" id="checkout" required />
+          <small class="error"></small>
+        </div>
+
+        <div class="form-group">
+          <label>Room Type *</label>
+          <select id="room" required>
+            <option value="">Select Room</option>
+            <option>Single</option>
+            <option>Double</option>
+            <option>Suite</option>
+          </select>
+          <small class="error"></small>
+        </div>
+
+        <div class="form-group guest-wrapper">
+          <label>Guests *</label>
+          <div class="guest-selector" id="guestSelector">
+            <span id="guestSummary">1 Adult</span>
+          </div>
+
+          <div class="guest-dropdown" id="guestDropdown">
+            <div class="guest-row">
+              <span>Adults</span>
+              <div class="counter">
+                <button type="button" data-type="adult" class="minus">-</button>
+                <span id="adultCount">1</span>
+                <button type="button" data-type="adult" class="plus">+</button>
+              </div>
+            </div>
+
+            <div class="guest-row">
+              <span>Children</span>
+              <div class="counter">
+                <button type="button" data-type="child" class="minus">-</button>
+                <span id="childCount">0</span>
+                <button type="button" data-type="child" class="plus">+</button>
+              </div>
+            </div>
+          </div>
+
+          <small class="error"></small>
+        </div>
+
+        <div class="form-group full">
+          <label>Special Requests (Optional)</label>
+          <textarea rows="3"></textarea>
+        </div>
+
+        <button class="submit-btn">Book Now</button>
+
+        <div class="success" id="successMsg"></div>
+      </form>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("bookingForm");
+        const checkin = document.getElementById("checkin");
+        const checkout = document.getElementById("checkout");
+        const room = document.getElementById("room");
+        const textarea = document.querySelector("textarea");
+        const successMsg = document.getElementById("successMsg");
+
+        /* =========================
+     DATE VALIDATION
+  ========================== */
+
+        const today = new Date().toISOString().split("T")[0];
+        checkin.setAttribute("min", today);
+
+        checkin.addEventListener("change", () => {
+          checkout.value = "";
+          checkout.setAttribute("min", checkin.value);
+        });
+
+        /* =========================
+     GUEST SELECTOR
+  ========================== */
+
+        let adults = 1;
+        let children = 0;
+
+        const guestSelector = document.getElementById("guestSelector");
+        const guestDropdown = document.getElementById("guestDropdown");
+        const adultCount = document.getElementById("adultCount");
+        const childCount = document.getElementById("childCount");
+        const guestSummary = document.getElementById("guestSummary");
+
+        function updateGuest() {
+          adultCount.textContent = adults;
+          childCount.textContent = children;
+
+          let text = `${adults} Adult${adults > 1 ? "s" : ""}`;
+          if (children > 0) {
+            text += `, ${children} Child${children > 1 ? "ren" : ""}`;
+          }
+
+          guestSummary.textContent = text;
+        }
+
+        guestSelector.addEventListener("click", () => {
+          guestDropdown.classList.toggle("active");
+        });
+
+        document.querySelectorAll(".plus").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (btn.dataset.type === "adult") adults++;
+            if (btn.dataset.type === "child") children++;
+            updateGuest();
+          });
+        });
+
+        document.querySelectorAll(".minus").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (btn.dataset.type === "adult" && adults > 1) adults--;
+            if (btn.dataset.type === "child" && children > 0) children--;
+            updateGuest();
+          });
+        });
+
+        document.addEventListener("click", (e) => {
+          if (
+            !guestSelector.contains(e.target) &&
+            !guestDropdown.contains(e.target)
+          ) {
+            guestDropdown.classList.remove("active");
+          }
+        });
+
+        /* =========================
+     FORM VALIDATION
+  ========================== */
+
+        function showError(input, message) {
+          const errorEl = input.parentElement.querySelector(".error");
+          if (errorEl) errorEl.textContent = message;
+        }
+
+        function clearErrors() {
+          document
+            .querySelectorAll(".error")
+            .forEach((el) => (el.textContent = ""));
+        }
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          clearErrors();
+          successMsg.textContent = "";
+
+          let isValid = true;
+
+          if (!checkin.value) {
+            showError(checkin, "Please select check-in date");
+            isValid = false;
+          }
+
+          if (!checkout.value) {
+            showError(checkout, "Please select check-out date");
+            isValid = false;
+          } else if (checkout.value <= checkin.value) {
+            showError(checkout, "Check-out must be after check-in");
+            isValid = false;
+          }
+
+          if (!room.value) {
+            showError(room, "Please select room type");
+            isValid = false;
+          }
+
+          if (adults + children <= 0) {
+            showError(guestSelector, "Please select at least 1 guest");
+            isValid = false;
+          }
+
+          if (!isValid) return;
+
+          /* =========================
+       CREATE BOOKING OBJECT
+    ========================== */
+
+          const bookingData = {
+            checkIn: checkin.value,
+            checkOut: checkout.value,
+            roomType: room.value,
+            adults: adults,
+            children: children,
+            totalGuests: adults + children,
+            specialRequests: textarea.value.trim(),
+            bookingDate: new Date().toLocaleString(),
+          };
+
+          console.log("Booking Data:", bookingData);
+
+          localStorage.setItem("hotelBooking", JSON.stringify(bookingData));
+
+          successMsg.textContent = "Booking Successful 🎉";
+          setTimeout(() => {
+            successMsg.textContent = "";
+          }, 5000);
+
+          form.reset();
+          adults = 1;
+          children = 0;
+          updateGuest();
+          checkout.removeAttribute("min");
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,149 @@
+.container {
+  margin-top: 3rem;
+  max-width: 800px;
+  margin: auto;
+  background: var(--white);
+  padding: 3rem;
+  border-radius: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+}
+
+form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+input,
+select,
+textarea {
+  padding: 0.8rem;
+  border-radius: 0.4rem;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: 0.3s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(44, 56, 85, 0.1);
+}
+
+.full {
+  grid-column: span 2;
+}
+
+button.submit-btn {
+  grid-column: span 2;
+  padding: 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+button.submit-btn:hover {
+  background: var(--primary-color-dark);
+}
+
+.error {
+  color: red;
+  font-size: 0.8rem;
+  height: 14px;
+}
+
+.success {
+  grid-column: span 2;
+  color: green;
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+/* Guest Dropdown */
+.guest-selector {
+  padding: 0.8rem;
+  border-radius: 0.8rem;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background: white;
+}
+
+.guest-dropdown {
+  position: absolute;
+  background: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-top: 0.5rem;
+  display: none;
+  width: 100%;
+  z-index: 10;
+}
+
+.guest-dropdown.active {
+  display: block;
+}
+
+.guest-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.counter button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary-color);
+  color: white;
+  cursor: pointer;
+}
+
+.counter button:hover {
+  background: var(--primary-color-dark);
+}
+
+.guest-wrapper {
+  position: relative;
+}
+
+
+@media (max-width: 600px) {
+  form {
+    grid-template-columns: 1fr;
+  }
+  .full,
+  button.submit-btn,
+  .success {
+    grid-column: span 1;
+  }
+}
