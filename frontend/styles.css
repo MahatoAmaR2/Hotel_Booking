@@ -170,9 +170,11 @@ nav {
   color: var(--text-dark);
 }
 
-.booking__container input:focus ~ label {
+.booking__container input:focus ~ label,
+.booking__container input:valid ~ label {
   font-size: 0.8rem;
   top: 0;
+  background-color: transparent;
 }
 
 .booking__container .form__group p {
@@ -434,3 +436,5 @@ nav {
     gap: 2rem;
   }
 }
+
+
